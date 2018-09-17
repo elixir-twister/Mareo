@@ -17,7 +17,8 @@ type controls =
   | CLeft
   | CRight
   | CUp
-  | CDown;
+  | CDown
+  | CRun ;
 
 type pl_typ =
   | BigM
@@ -48,6 +49,7 @@ type block_typ =
 type player_typ =
   | Standing
   | Jumping
+  | Walking
   | Running
   | Crouching;
 

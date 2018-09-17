@@ -13,6 +13,7 @@ type keys = {
   mutable right: bool,
   mutable up: bool,
   mutable down: bool,
+  mutable run: bool,
   mutable bbox: int,
 };
 
@@ -40,6 +41,7 @@ let pressed_keys = {
   right: false,
   up: false,
   down: false,
+  run: false,
   bbox: 0,
 };
 
@@ -418,6 +420,7 @@ let translate_keys = () => {
     (k.right, CRight),
     (k.up, CUp),
     (k.down, CDown),
+    (k.run, CRun),
   ];
   List.reduce(ctrls, [], (a, x) =>
     if (fst(x)) {
@@ -500,6 +503,7 @@ let update_loop = (canvas, (player, objs), map_dim) => {
   let rec update_helper = (time, state, player, objs, parts) =>
     if (state.game_over == true) {
       Draw.game_win(state.ctx);
+
     } else {
       collid_objs := [];
       particles := [];
@@ -543,6 +547,8 @@ let keydown = evt => {
     | 87 => pressed_keys.up = true
     | 39
     | 68 => pressed_keys.right = true
+    | 90
+    | 16 => pressed_keys.run = true
     | 37
     | 65 => pressed_keys.left = true
     | 40
@@ -565,6 +571,8 @@ let keyup = evt => {
     | 68 => pressed_keys.right = false
     | 37
     | 65 => pressed_keys.left = false
+    | 90
+    | 16 => pressed_keys.run = false
     | 40
     | 83 => pressed_keys.down = false
     | _ => ()

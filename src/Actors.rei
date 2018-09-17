@@ -19,7 +19,8 @@ type controls =
   | CLeft
   | CRight
   | CUp
-  | CDown;
+  | CDown
+  | CRun ;
 
 /* Player ability type */
 type pl_typ =
@@ -52,6 +53,7 @@ type block_typ =
 type player_typ =
   | Standing
   | Jumping
+  | Walking
   | Running
   | Crouching;
 

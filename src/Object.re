@@ -11,6 +11,8 @@ let max_y_vel = 4.5;
 
 let player_speed = 2.8;
 
+let player_max_speed = 4.1;
+
 let player_jump = 5.7;
 
 let player_max_jump = (-6.);
@@ -27,6 +29,7 @@ type aabb = {
 type obj_params = {
   has_gravity: bool,
   speed: float,
+  max_speed: float,
 };
 
 let id_counter = ref(min_int);
@@ -37,6 +40,7 @@ type obj = {
   vel: xy,
   id: int,
   mutable jumping: bool,
+  mutable running: bool,
   mutable grounded: bool,
   mutable dir: Actors.dir_1d,
   mutable invuln: int,
@@ -53,9 +57,11 @@ type collidable =
   | Block(block_typ, Sprite.sprite, obj);
 
 /*setup_obj is used to set gravity and speed, with default values true and 1.*/
-let setup_obj = (~g as has_gravity=true, ~spd as speed=1., ()) => {
+let setup_obj = (~g as has_gravity=true, ~spd as speed=1.,
+~maxspd as max_speed=2., ()) => {
   has_gravity,
   speed,
+  max_speed,
 };
 
 /* Sets an object's x velocity to the speed specified in its params based on
@@ -71,7 +77,7 @@ let set_vel_to_speed = obj => {
 /* The following make functions all set the objects' has_gravity and speed,
  * returning an [obj_params] that can be directly plugged into the [obj]
  * during creation. */
-let make_player = () => setup_obj(~spd=player_speed, ());
+let make_player = () => setup_obj(~spd=player_speed, ~maxspd = player_max_speed, ());
 
 let make_item =
   fun
@@ -132,6 +138,7 @@ let make = (~id=None, ~dir=Left, spawnable, context, (posx, posy)) => {
     },
     id,
     jumping: false,
+    running: false,
     grounded: false,
     dir,
     invuln: 0,
@@ -186,19 +193,34 @@ let equals = (col1, col2) => get_obj(col1).id == get_obj(col2).id;
 /*Matches the controls being used and updates each of the player's params.*/
 let update_player_keys = (player: obj, controls: controls) : unit => {
   let lr_acc = player.vel.x *. 0.2;
+  let lr_run_acc = player.vel.x *. 0.8;
   switch (controls) {
+  | CRun => player.running = true;
   | CLeft =>
     if (! player.crouch) {
+    if ( player.running) {
+            if (player.vel.x > -. player.params.max_speed) {
+                   player.vel.x = player.vel.x -. (0.4 -. lr_run_acc);
+                 };
+           }else{
       if (player.vel.x > -. player.params.speed) {
         player.vel.x = player.vel.x -. (0.4 -. lr_acc);
-      };
+      }};
+
       player.dir = Left;
     }
   | CRight =>
     if (! player.crouch) {
+     if ( player.running) {
+            if (player.vel.x < player.params.max_speed) {
+                   player.vel.x = player.vel.x +. (0.4 +. lr_run_acc);
+                 };
+           }else{
       if (player.vel.x < player.params.speed) {
         player.vel.x = player.vel.x +. (0.4 +. lr_acc);
+      }
       };
+
       player.dir = Right;
     }
   | CUp =>
@@ -256,9 +278,16 @@ let update_player = (player, keys, context) => {
       pl_typ,
       Sprite.make(SPlayer(pl_typ, Jumping), player.dir, context),
     ));
-  } else if (prev_dir != player.dir
+  } else if (prev_dir != player.dir && ! player.running
              || (prev_vx == 0. && abs_float(player.vel.x) > 0.)
-             && ! player.jumping) {
+             && ! player.jumping && ! player.running) {
+    Some((
+      pl_typ,
+      Sprite.make(SPlayer(pl_typ, Walking), player.dir, context),
+    ));
+  } else if (prev_dir != player.dir &&  player.running
+             || (prev_vx == 0. && abs_float(player.vel.x) > 0.)
+             && ! player.jumping && player.running) {
     Some((
       pl_typ,
       Sprite.make(SPlayer(pl_typ, Running), player.dir, context),

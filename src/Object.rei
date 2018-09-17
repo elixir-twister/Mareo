@@ -13,7 +13,8 @@ type aabb = {
 
 type obj_params = {
   has_gravity: bool,
-  speed: float
+  speed: float,
+  max_speed: float,
 };
 
 type obj = {
@@ -22,6 +23,7 @@ type obj = {
   vel: xy,
   id: int,
   mutable jumping: bool,
+  mutable running: bool,
   mutable grounded: bool,
   mutable dir: Actors.dir_1d,
   mutable invuln: int,

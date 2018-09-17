@@ -90,6 +90,16 @@ let make_small_player = ((typ, dir)) =>
         (16., 16.),
         (16., 0.),
       )
+     | Walking =>
+     setup_sprite(
+             "mario-small.png",
+             ~bb_off=(2., 1.),
+             ~bb_sz=(12., 15.),
+             3,
+             5,
+             (16., 16.),
+             (16., 0.),
+           )
     | Crouching =>
       setup_sprite(
         "mario-small.png",
@@ -133,6 +143,16 @@ let make_small_player = ((typ, dir)) =>
         (16., 16.),
         (16., 32.),
       )
+    | Walking =>
+    setup_sprite(
+            "mario-small.png",
+            ~bb_off=(2., 1.),
+            ~bb_sz=(12., 15.),
+            3,
+            5,
+            (16., 16.),
+            (16., 32.),
+          )
     | Crouching =>
       setup_sprite(
         "mario-small.png",
@@ -181,6 +201,16 @@ let make_big_player = ((typ, dir)) =>
         (16., 27.),
         (0., 37.),
       )
+      | Walking =>
+          setup_sprite(
+                  "mario-big.png",
+                  4,
+                  10,
+                  ~bb_off=(2., 1.),
+                  ~bb_sz=(13., 25.),
+                  (16., 27.),
+                  (0., 37.),
+                )
     | Crouching =>
       setup_sprite(
         "mario-big.png",
@@ -224,6 +254,16 @@ let make_big_player = ((typ, dir)) =>
         (16., 27.),
         (0., 101.),
       )
+     | Walking =>
+         setup_sprite(
+                 "mario-big.png",
+                 4,
+                 10,
+                 ~bb_off=(2., 1.),
+                 ~bb_sz=(13., 25.),
+                 (16., 27.),
+                 (0., 101.),
+               )
     | Crouching =>
       setup_sprite(
         "mario-big.png",
