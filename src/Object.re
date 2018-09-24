@@ -11,7 +11,7 @@ let max_y_vel = 4.5;
 
 let player_speed = 2.8;
 
-let player_max_speed = 4.1;
+let player_max_speed = 3.0;
 
 let player_jump = 5.7;
 
@@ -58,7 +58,7 @@ type collidable =
 
 /*setup_obj is used to set gravity and speed, with default values true and 1.*/
 let setup_obj = (~g as has_gravity=true, ~spd as speed=1.,
-~maxspd as max_speed=2., ()) => {
+~maxspd as max_speed=1.1, ()) => {
   has_gravity,
   speed,
   max_speed,
@@ -193,10 +193,12 @@ let equals = (col1, col2) => get_obj(col1).id == get_obj(col2).id;
 /*Matches the controls being used and updates each of the player's params.*/
 let update_player_keys = (player: obj, controls: controls) : unit => {
   let lr_acc = player.vel.x *. 0.2;
-  let lr_run_acc = player.vel.x *. 0.8;
+  let lr_run_acc = player.vel.x *. 0.28;
+  player.running = false;
   switch (controls) {
   | CRun => player.running = true;
   | CLeft =>
+  player.dir = Left;
     if (! player.crouch) {
     if ( player.running) {
             if (player.vel.x > -. player.params.max_speed) {
@@ -207,9 +209,9 @@ let update_player_keys = (player: obj, controls: controls) : unit => {
         player.vel.x = player.vel.x -. (0.4 -. lr_acc);
       }};
 
-      player.dir = Left;
     }
   | CRight =>
+  player.dir = Right;
     if (! player.crouch) {
      if ( player.running) {
             if (player.vel.x < player.params.max_speed) {
@@ -221,7 +223,6 @@ let update_player_keys = (player: obj, controls: controls) : unit => {
       }
       };
 
-      player.dir = Right;
     }
   | CUp =>
     if (! player.jumping && player.grounded) {
